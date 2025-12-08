@@ -1,19 +1,10 @@
 
 
-```md
-# 🌐 Personal Portfolio Website
-
-![React](https://img.shields.io/badge/React-18-blue)
-![Vite](https://img.shields.io/badge/Vite-4-purple)
-![Framer Motion](https://img.shields.io/badge/Framer%20Motion-Animation-pink)
-![Formspree](https://img.shields.io/badge/Formspree-Contact%20Form-green)
-![Status](https://img.shields.io/badge/Status-Live-success)
 
 A modern, fully responsive, and animated **personal portfolio website** built using **React + Vite**, featuring smooth section reveals, interactive animations, and a functional contact form powered by **Formspree**.
 
 This website showcases my **skills, experience, education, and real-world projects** in a clean, professional, and recruiter-friendly design.
 
----
 
 ## 🚀 Live Demo
 
