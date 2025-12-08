@@ -204,24 +204,5 @@ Software Developer | MERN Stack | Automation & RPA
 
 🔗 GitHub: [https://github.com/jasleenkaur0609](https://github.com/jasleenkaur0609)
 🔗 LinkedIn: [https://www.linkedin.com/in/jasleen-kaur-0892b9204](https://www.linkedin.com/in/jasleen-kaur-0892b9204)
-📩 Email: (Add your professional email here)
-
----
-
-⭐ If you like this portfolio, don’t forget to **star the repository**!
-
-````
-
----
-
-# ✅ WHAT YOU SHOULD DO NOW
-
-1️⃣ Replace your `README.md` with this  
-2️⃣ Commit the changes:
-
-```bash
-git add README.md
-git commit -m "docs: add professional README with badges, features and screenshots section"
-git push
-````
+📩 Email: (jasleensejal2003@gmail.com)
 
