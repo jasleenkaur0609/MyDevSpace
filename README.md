@@ -62,18 +62,7 @@ It follows **modern UI/UX practices** including:
 
 ---
 
-## 📸 Screenshots (Add After Deployment)
 
-> Once your site is live, take screenshots and add them here:
-
-```
-
-````
-
-Then display them like this:
-
-
----
 
 ## 📂 Folder Structure
 
