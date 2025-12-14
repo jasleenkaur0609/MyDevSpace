@@ -54,13 +54,13 @@ const Projects = () => {
               >
                 GitHub →
               </a>
-              <a
+              {/* <a
                 href={project.live}
                 target="_blank"
                 className="text-accent hover:underline"
               >
                 Live Demo →
-              </a>
+              </a> */}
             </div>
           </motion.div>
         ))}

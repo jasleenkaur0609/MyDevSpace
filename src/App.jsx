@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import Navbar from "./components/Navbar.jsx";
 import Preloader from "./components/Preloader.jsx";
 import Hero from "./components/Hero.jsx";
@@ -10,11 +11,15 @@ import Projects from "./components/Projects.jsx";
 import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 
+import ScrollProgress from "./components/ScrollProgress.jsx";
+import SectionIndicator from "./components/SectionIndicator.jsx";
+
 const App = () => {
   const [loading, setLoading] = useState(true);
 
+  // ✅ Preloader duration: 5 seconds
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1300);
+    const t = setTimeout(() => setLoading(false), 5000);
     return () => clearTimeout(t);
   }, []);
 
@@ -22,45 +27,52 @@ const App = () => {
 
   return (
     <div className="bg-background text-gray-100 min-h-screen">
+      {/* ✅ GLOBAL UI ELEMENTS */}
+      <ScrollProgress />
+      <SectionIndicator />
       <Navbar />
 
+      {/* ✅ MAIN CONTENT */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28 pb-20">
-        {/* ✅ HERO */}
+        
+        {/* HERO */}
         <section id="home" className="pt-16">
           <Hero />
         </section>
 
-        {/* ✅ ABOUT */}
+        {/* ABOUT */}
         <section id="about">
           <About />
         </section>
 
-        {/* ✅ SKILLS */}
+        {/* SKILLS */}
         <section id="skills">
           <Skills />
         </section>
 
-        {/* ✅ EXPERIENCE (NEW) */}
+        {/* EXPERIENCE */}
         <section id="experience">
           <Experience />
         </section>
 
-        {/* ✅ EDUCATION (NEW – B.E + 12th + 10th) */}
+        {/* EDUCATION */}
         <section id="education">
           <Education />
         </section>
 
-        {/* ✅ PROJECTS */}
+        {/* PROJECTS */}
         <section id="projects">
           <Projects />
         </section>
 
-        {/* ✅ CONTACT */}
+        {/* CONTACT */}
         <section id="contact">
           <Contact />
         </section>
+
       </main>
 
+      {/* FOOTER */}
       <Footer />
     </div>
   );
