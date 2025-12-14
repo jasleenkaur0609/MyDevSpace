@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar.jsx";
 import Preloader from "./components/Preloader.jsx";
@@ -14,10 +15,17 @@ import Footer from "./components/Footer.jsx";
 import ScrollProgress from "./components/ScrollProgress.jsx";
 import SectionIndicator from "./components/SectionIndicator.jsx";
 
+// ✅ Case Study Page
+import CaseStudy from "./components/CaseStudy.jsx";
+
 const App = () => {
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
-  // ✅ Preloader duration: 5 seconds
+  // ✅ Detect Case Study Page
+  const isCaseStudy = location.pathname.startsWith("/case-study");
+
+  // ✅ Preloader (5 seconds)
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 5000);
     return () => clearTimeout(t);
@@ -27,53 +35,65 @@ const App = () => {
 
   return (
     <div className="bg-background text-gray-100 min-h-screen">
-      {/* ✅ GLOBAL UI ELEMENTS */}
-      <ScrollProgress />
-      <SectionIndicator />
-      <Navbar />
+      
+      {/* ❌ HIDE GLOBAL UI ON CASE STUDY */}
+      {!isCaseStudy && <ScrollProgress />}
+      {!isCaseStudy && <SectionIndicator />}
+      {!isCaseStudy && <Navbar />}
 
-      {/* ✅ MAIN CONTENT */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28 pb-20">
-        
-        {/* HERO */}
-        <section id="home" className="pt-16">
-          <Hero />
-        </section>
+      {/* ✅ ROUTES */}
+      <Routes>
+        {/* HOME PAGE */}
+        <Route
+          path="/"
+          element={
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28 pb-20">
+              
+              <section id="home" className="pt-16">
+                <Hero />
+              </section>
 
-        {/* ABOUT */}
-        <section id="about">
-          <About />
-        </section>
+              <section id="about">
+                <About />
+              </section>
 
-        {/* SKILLS */}
-        <section id="skills">
-          <Skills />
-        </section>
+              <section id="skills">
+                <Skills />
+              </section>
 
-        {/* EXPERIENCE */}
-        <section id="experience">
-          <Experience />
-        </section>
+              <section id="experience">
+                <Experience />
+              </section>
 
-        {/* EDUCATION */}
-        <section id="education">
-          <Education />
-        </section>
+              <section id="education">
+                <Education />
+              </section>
 
-        {/* PROJECTS */}
-        <section id="projects">
-          <Projects />
-        </section>
+              <section id="projects">
+                <Projects />
+              </section>
 
-        {/* CONTACT */}
-        <section id="contact">
-          <Contact />
-        </section>
+              <section id="contact">
+                <Contact />
+              </section>
 
-      </main>
+            </main>
+          }
+        />
 
-      {/* FOOTER */}
-      <Footer />
+        {/* CASE STUDY PAGE (FOCUSED VIEW) */}
+        <Route
+          path="/case-study/:slug"
+          element={
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <CaseStudy />
+            </main>
+          }
+        />
+      </Routes>
+
+      {/* ❌ HIDE FOOTER ON CASE STUDY */}
+      {!isCaseStudy && <Footer />}
     </div>
   );
 };

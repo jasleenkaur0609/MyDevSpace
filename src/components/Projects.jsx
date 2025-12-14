@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { projects } from "../data/projects";
 
 const categories = ["All", "Full Stack", "Web App", "AI / Web"];
@@ -77,12 +78,14 @@ const Projects = () => {
             </div>
 
             {/* IMPACT */}
-            <p className="text-xs text-accent mb-5">
-              📈 {project.impact}
-            </p>
+            {project.impact && (
+              <p className="text-xs text-accent mb-5">
+                📈 {project.impact}
+              </p>
+            )}
 
             {/* LINKS */}
-            <div className="flex gap-4 text-sm">
+            <div className="flex gap-6 text-sm items-center">
               <a
                 href={project.github}
                 target="_blank"
@@ -91,6 +94,16 @@ const Projects = () => {
               >
                 GitHub →
               </a>
+
+              {/* CASE STUDY LINK (ONLY FOR PROJECTS THAT HAVE ONE) */}
+              {project.caseStudySlug && (
+                <Link
+                  to={`/case-study/${project.caseStudySlug}`}
+                  className="text-accent hover:underline"
+                >
+                  View Case Study →
+                </Link>
+              )}
             </div>
           </motion.div>
         ))}
