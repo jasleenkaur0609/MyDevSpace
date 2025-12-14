@@ -81,12 +81,13 @@ const Hero = () => {
             </a>
 
             <a
-              href="/Jasleen_Kaur_Resume.pdf"
-              target="_blank"
+              href="/Resume.pdf"
+              download
               className="px-6 py-3 border border-accent text-accent rounded-full hover:scale-110 transition"
             >
-              Download Resume
+            Download Resume
             </a>
+
 
             <a
               href="#contact"
