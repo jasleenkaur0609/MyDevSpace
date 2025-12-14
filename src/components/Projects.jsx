@@ -1,7 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { projects } from "../data/projects";
 
+const categories = ["All", "Full Stack", "Web App", "AI / Web"];
+
 const Projects = () => {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filteredProjects =
+    activeCategory === "All"
+      ? projects
+      : projects.filter(
+          (project) => project.category === activeCategory
+        );
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -9,12 +21,31 @@ const Projects = () => {
       transition={{ duration: 0.8 }}
       viewport={{ once: true }}
     >
-      <h2 className="text-3xl font-bold text-center mb-12">
+      {/* SECTION TITLE */}
+      <h2 className="text-3xl font-bold text-center mb-6">
         Featured Projects
       </h2>
 
+      {/* FILTERS */}
+      <div className="flex justify-center gap-4 mb-12 flex-wrap">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`px-4 py-1.5 rounded-full text-sm border transition ${
+              activeCategory === category
+                ? "bg-accent text-black border-accent"
+                : "border-white/10 text-gray-300 hover:bg-white/10"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* PROJECT GRID */}
       <div className="grid md:grid-cols-2 gap-10">
-        {projects.map((project, index) => (
+        {filteredProjects.map((project, index) => (
           <motion.div
             key={project.title}
             initial={{ opacity: 0, y: 60 }}
@@ -34,7 +65,7 @@ const Projects = () => {
             </p>
 
             {/* TECH STACK */}
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-4">
               {project.tech.map((tech) => (
                 <span
                   key={tech}
@@ -45,22 +76,21 @@ const Projects = () => {
               ))}
             </div>
 
+            {/* IMPACT */}
+            <p className="text-xs text-accent mb-5">
+              📈 {project.impact}
+            </p>
+
             {/* LINKS */}
             <div className="flex gap-4 text-sm">
               <a
                 href={project.github}
                 target="_blank"
+                rel="noreferrer"
                 className="text-accent hover:underline"
               >
                 GitHub →
               </a>
-              {/* <a
-                href={project.live}
-                target="_blank"
-                className="text-accent hover:underline"
-              >
-                Live Demo →
-              </a> */}
             </div>
           </motion.div>
         ))}
