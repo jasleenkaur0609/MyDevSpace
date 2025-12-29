@@ -6,9 +6,11 @@ import Preloader from "./components/Preloader.jsx";
 import Hero from "./components/Hero.jsx";
 import About from "./components/About.jsx";
 import Skills from "./components/Skills.jsx";
+import Certifications from "./components/Certifications.jsx"; // ✅ NEW
 import Experience from "./components/Experience.jsx";
 import Education from "./components/Education.jsx";
 import Projects from "./components/Projects.jsx";
+import GithubStats from "./components/GitHubStats.jsx"; // ✅ NEW
 import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 
@@ -61,6 +63,11 @@ const App = () => {
                 <Skills />
               </section>
 
+              {/* ✅ CERTIFICATIONS */}
+              <section id="certifications">
+                <Certifications />
+              </section>
+
               <section id="experience">
                 <Experience />
               </section>
@@ -71,6 +78,11 @@ const App = () => {
 
               <section id="projects">
                 <Projects />
+              </section>
+
+              {/* ✅ GITHUB STATS */}
+              <section id="github">
+                <GithubStats />
               </section>
 
               <section id="contact">
