@@ -6,11 +6,11 @@ const navLinks = [
   { id: "home", label: "Home" },
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
+  { id: "certifications", label: "Certifications" },
   { id: "experience", label: "Experience" },
   { id: "education", label: "Education" },
-  { id: "certifications", label: "Certifications" },
-  { id: "github", label: "GitHub" },
   { id: "projects", label: "Projects" },
+  { id: "github", label: "GitHub" },
   { id: "contact", label: "Contact" },
 ];
 
