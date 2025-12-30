@@ -6,28 +6,27 @@ import Preloader from "./components/Preloader.jsx";
 import Hero from "./components/Hero.jsx";
 import About from "./components/About.jsx";
 import Skills from "./components/Skills.jsx";
-import Certifications from "./components/Certifications.jsx"; // ✅ NEW
+import Certifications from "./components/Certifications.jsx";
 import Experience from "./components/Experience.jsx";
 import Education from "./components/Education.jsx";
 import Projects from "./components/Projects.jsx";
-import GithubStats from "./components/GitHubStats.jsx"; // ✅ NEW
+import GithubStats from "./components/GitHubStats.jsx";
 import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 
 import ScrollProgress from "./components/ScrollProgress.jsx";
-import SectionIndicator from "./components/SectionIndicator.jsx";
 
-// ✅ Case Study Page
+// Case Study Page
 import CaseStudy from "./components/CaseStudy.jsx";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
-  // ✅ Detect Case Study Page
+  // Detect Case Study Page
   const isCaseStudy = location.pathname.startsWith("/case-study");
 
-  // ✅ Preloader (5 seconds)
+  // Preloader
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 5000);
     return () => clearTimeout(t);
@@ -37,20 +36,16 @@ const App = () => {
 
   return (
     <div className="bg-background text-gray-100 min-h-screen">
-      
-      {/* ❌ HIDE GLOBAL UI ON CASE STUDY */}
+      {/* GLOBAL UI */}
       {!isCaseStudy && <ScrollProgress />}
-      {!isCaseStudy && <SectionIndicator />}
       {!isCaseStudy && <Navbar />}
 
-      {/* ✅ ROUTES */}
+      {/* ROUTES */}
       <Routes>
-        {/* HOME PAGE */}
         <Route
           path="/"
           element={
             <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28 pb-20">
-              
               <section id="home" className="pt-16">
                 <Hero />
               </section>
@@ -63,7 +58,6 @@ const App = () => {
                 <Skills />
               </section>
 
-              {/* ✅ CERTIFICATIONS */}
               <section id="certifications">
                 <Certifications />
               </section>
@@ -80,7 +74,6 @@ const App = () => {
                 <Projects />
               </section>
 
-              {/* ✅ GITHUB STATS */}
               <section id="github">
                 <GithubStats />
               </section>
@@ -88,12 +81,10 @@ const App = () => {
               <section id="contact">
                 <Contact />
               </section>
-
             </main>
           }
         />
 
-        {/* CASE STUDY PAGE (FOCUSED VIEW) */}
         <Route
           path="/case-study/:slug"
           element={
@@ -104,7 +95,6 @@ const App = () => {
         />
       </Routes>
 
-      {/* ❌ HIDE FOOTER ON CASE STUDY */}
       {!isCaseStudy && <Footer />}
     </div>
   );

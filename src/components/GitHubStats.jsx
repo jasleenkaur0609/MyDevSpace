@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Line,
 } from "recharts";
 import { format } from "date-fns";
 
@@ -22,7 +23,9 @@ const GithubStats = () => {
     total: 0,
     mostActiveMonth: "",
   });
+  const [topRepos, setTopRepos] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const scrollYRef = useRef(0);
 
   useEffect(() => {
@@ -44,7 +47,8 @@ const GithubStats = () => {
       const from = new Date(year, 0, 1).toISOString();
       const to = new Date(year, 11, 31).toISOString();
 
-      const query = `
+      /* ---------- GRAPHQL (CONTRIBUTIONS) ---------- */
+      const graphQuery = `
         query {
           user(login: "${USERNAME}") {
             contributionsCollection(from: "${from}", to: "${to}") {
@@ -62,27 +66,34 @@ const GithubStats = () => {
         }
       `;
 
-      const res = await fetch("https://api.github.com/graphql", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
+      /* ---------- REST (REPOS) ---------- */
+      const [graphRes, repoRes] = await Promise.all([
+        fetch("https://api.github.com/graphql", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: graphQuery }),
+        }),
+        fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100`, {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
+          },
+        }),
+      ]);
 
-      const json = await res.json();
+      const graphJson = await graphRes.json();
+      const repoJson = await repoRes.json();
 
-      if (!json?.data?.user) {
-        throw new Error("GitHub API error");
-      }
+      if (!graphJson?.data?.user) throw new Error("GitHub API error");
 
       const days =
-        json.data.user.contributionsCollection.contributionCalendar.weeks.flatMap(
+        graphJson.data.user.contributionsCollection.contributionCalendar.weeks.flatMap(
           (w) => w.contributionDays
         );
 
-      /* ---------- MONTHLY ---------- */
+      /* ---------- MONTHLY DATA ---------- */
       const months = Array.from({ length: 12 }, (_, i) => ({
         month: format(new Date(year, i, 1), "MMM"),
         count: 0,
@@ -93,6 +104,15 @@ const GithubStats = () => {
         months[m].count += d.contributionCount;
       });
 
+      /* ---------- TREND (MoM) ---------- */
+      const trendData = months.map((m, i) => ({
+        ...m,
+        trend:
+          i === 0
+            ? m.count
+            : Math.round((months[i - 1].count + m.count) / 2),
+      }));
+
       /* ---------- QUARTERS ---------- */
       const q = [
         { label: "Q1", count: months.slice(0, 3).reduce((s, m) => s + m.count, 0) },
@@ -101,16 +121,24 @@ const GithubStats = () => {
         { label: "Q4", count: months.slice(9, 12).reduce((s, m) => s + m.count, 0) },
       ];
 
+      /* ---------- SUMMARY ---------- */
       const mostActive = months.reduce((a, b) =>
         b.count > a.count ? b : a
       );
 
-      setMonthlyData(months);
+      /* ---------- TOP REPOS ---------- */
+      const highlights = repoJson
+        .filter((r) => !r.fork)
+        .sort((a, b) => b.stargazers_count - a.stargazers_count)
+        .slice(0, 3);
+
+      setMonthlyData(trendData);
       setQuarters(q);
+      setTopRepos(highlights);
       setSummary({
         year,
         total:
-          json.data.user.contributionsCollection.contributionCalendar
+          graphJson.data.user.contributionsCollection.contributionCalendar
             .totalContributions,
         mostActiveMonth: mostActive.month,
       });
@@ -126,9 +154,7 @@ const GithubStats = () => {
     <section className="py-24">
       {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-semibold text-white">
-          GitHub Activity
-        </h2>
+        <h2 className="text-3xl font-semibold text-white">GitHub Activity</h2>
 
         <a
           href={`https://github.com/${USERNAME}`}
@@ -161,13 +187,13 @@ const GithubStats = () => {
         ))}
       </div>
 
-      {/* CHART */}
+      {/* CHART WITH TREND LINE */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-12">
         <p className="text-sm text-gray-400 mb-4">
           Monthly Contributions {summary.year && `(${summary.year})`}
         </p>
 
-        <div className="h-[240px] md:h-[280px]">
+        <div className="h-[260px]">
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div
@@ -206,6 +232,13 @@ const GithubStats = () => {
                         />
                       ))}
                     </Bar>
+                    <Line
+                      type="monotone"
+                      dataKey="trend"
+                      stroke="#22c55e"
+                      strokeWidth={2}
+                      dot={false}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </motion.div>
@@ -228,13 +261,40 @@ const GithubStats = () => {
       </div>
 
       {/* SUMMARY */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-6 mb-12">
         <Summary label="Year" value={summary.year} />
         <Summary label="Total Contributions" value={summary.total} />
-        <Summary
-          label="Most Active Month"
-          value={summary.mostActiveMonth}
-        />
+        <Summary label="Most Active Month" value={summary.mostActiveMonth} />
+      </div>
+
+      {/* REPO HIGHLIGHTS */}
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Repository Highlights
+        </h3>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {topRepos.map((repo) => (
+            <a
+              key={repo.id}
+              href={repo.html_url}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-cyan-400/40 transition"
+            >
+              <p className="text-white font-medium">{repo.name}</p>
+              <p className="text-sm text-gray-400 mt-1 line-clamp-2">
+                {repo.description || "No description"}
+              </p>
+
+              <div className="flex gap-4 mt-4 text-xs text-gray-400">
+                <span>⭐ {repo.stargazers_count}</span>
+                <span>🍴 {repo.forks_count}</span>
+                <span>{repo.language || "—"}</span>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   );
