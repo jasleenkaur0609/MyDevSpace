@@ -9,8 +9,6 @@ import {
   ResponsiveContainer,
   Cell,
   Line,
-  PieChart,
-  Pie,
 } from "recharts";
 import { format } from "date-fns";
 
@@ -25,14 +23,14 @@ const CATEGORIES = {
 
 const getCategory = (repo) => {
   const text = `${repo.name} ${repo.description || ""}`.toLowerCase();
-  if (CATEGORIES.Automation.some(k => text.includes(k))) return "Automation";
-  if (CATEGORIES.Backend.some(k => text.includes(k))) return "Backend";
+  if (CATEGORIES.Automation.some((k) => text.includes(k))) return "Automation";
+  if (CATEGORIES.Backend.some((k) => text.includes(k))) return "Backend";
   return "Frontend";
 };
 
 const isWIP = (repo) => {
   const text = `${repo.name} ${repo.description || ""}`.toLowerCase();
-  return ["wip", "work in progress", "ongoing", "draft"].some(k =>
+  return ["wip", "work in progress", "ongoing", "draft"].some((k) =>
     text.includes(k)
   );
 };
@@ -69,9 +67,12 @@ const GithubStats = () => {
       setLoading(true);
 
       const year = new Date().getFullYear() - yearOffset;
-      const from = new Date(year, 0, 1).toISOString();
-      const to = new Date(year, 11, 31).toISOString();
 
+      /* ✅ SAFE UTC DATE RANGE */
+      const from = new Date(Date.UTC(year, 0, 1, 0, 0, 0)).toISOString();
+      const to = new Date().toISOString();
+
+      /* ✅ FIXED GRAPHQL QUERY (NO PRIVATE FLAG) */
       const graphQuery = `
         query {
           user(login: "${USERNAME}") {
@@ -107,9 +108,15 @@ const GithubStats = () => {
       ]);
 
       const graphJson = await graphRes.json();
+
+      if (!graphJson?.data?.user) {
+        console.error("GitHub GraphQL Error:", graphJson);
+        setLoading(false);
+        return;
+      }
+
       const repoJson = await repoRes.json();
 
-      /* ---------- DAYS ---------- */
       const days =
         graphJson.data.user.contributionsCollection.contributionCalendar.weeks.flatMap(
           (w) => w.contributionDays
@@ -158,7 +165,7 @@ const GithubStats = () => {
         .map(([name, value]) => ({ name, value }))
         .slice(0, 5);
 
-      /* ---------- ENHANCED REPOS ---------- */
+      /* ---------- REPOS ---------- */
       const enhancedRepos = repoJson
         .filter((r) => !r.fork && r.description && r.size > 50)
         .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
@@ -280,7 +287,9 @@ const GithubStats = () => {
             </div>
 
             {repo.wip && (
-              <span className="text-xs text-yellow-400">Work in Progress</span>
+              <span className="text-xs text-yellow-400">
+                Work in Progress
+              </span>
             )}
 
             <p className="text-sm text-gray-400 mt-2 line-clamp-2">
